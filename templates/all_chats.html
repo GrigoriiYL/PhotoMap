@@ -1,0 +1,11 @@
+{%extends "base.html"%}
+
+{%block content%}
+{% for chat in chats %}
+<div class="col-md6 border rounded">
+    <img src="{{chat[1].profile_photo_link}}" height='100px' width='100px' alt="Нет аватарки">
+    <h2>{{chat[1].name}}</h2>
+    <a class="btn" href="/open_chat/{{chat[0].id}}">Написать</a>
+</div>
+{%endfor%}
+{%endblock%}

@@ -1,0 +1,32 @@
+{%extends "base.html"%}
+
+{%block content%}
+<form action="" method="POST">
+    {{form.hidden_tag()}}
+    <p>
+        {{form.name.label}}
+        {{form.name(class='form-control')}}
+    </p>
+    <p>{{form.submit(type="submit", class="btn btn-primary")}}</p>
+    {%for user in users%}
+    {% if user.id != current_user.id%}
+        <div class="col-md6 border rounded">
+            <div class="image_name">
+                <img src="{{user.profile_photo_link}}" height="100px" width="100px" alt=" Нет аватарки">
+                <h2>{{user.name}}</h2>
+            </div>
+            <div>{{user.about}}</div>
+            {%if ' ' + current_user.id|string + ' ' not in user.subscribers%}
+                <a href="/subscribe/{{user.id}}" class="btn">Подписаться</a>
+            {%else%}
+                <div>
+                    Вы подписаны
+                </div>
+            {%endif%}
+            <a href="chat_search/{{user.id}}" class="btn">Написать</a>
+        </div>
+    {%endif%}
+    {%endfor%}
+</form>
+
+{%endblock%}

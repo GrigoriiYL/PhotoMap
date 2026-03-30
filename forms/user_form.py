@@ -4,7 +4,6 @@ from wtforms.validators import DataRequired
 from flask_wtf.file import FileField, FileRequired
 
 
-
 class UserForm(FlaskForm):
     email = EmailField("Email", validators=[DataRequired()])
     password = PasswordField("Пароль", validators=[DataRequired()])
@@ -12,3 +11,10 @@ class UserForm(FlaskForm):
     name = StringField('Имя', validators=[DataRequired()])
     about = StringField("Расскажите о себе")
     submit = SubmitField("Зарегистрироваться")
+
+
+class UserLoginForm(FlaskForm):
+    email = EmailField("Email", validators=[DataRequired()])
+    password = PasswordField("Пароль")
+    remember_me = BooleanField("Запомнить меня")
+    submit = SubmitField("Войти")
