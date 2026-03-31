@@ -156,7 +156,7 @@ def open_chat(id):
 @app.route('/all_chats')
 def get_all_chats():
     db_sess = db_session.create_session()
-    chats = db_sess.query(Chats).filter(Chats.user1 == current_user.id or Chats.user2 == current_user.id).all()
+    chats = db_sess.query(Chats).filter((Chats.user1 == current_user.id) | (Chats.user2 == current_user.id)).all()
     res_chat_sp = []
     for el in chats:
         sp = []

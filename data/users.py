@@ -17,7 +17,9 @@ class User(SqlAlchemyBase, UserMixin):
     about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     subscribers = sqlalchemy.Column(sqlalchemy.String, nullable=True, default=' ')
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    orm.relationship('Messages', back_populates='sender_user')
+    messages = orm.relationship('Messages', back_populates='sender_user')
+    posts = orm.relationship('Posts', back_populates='user')
+    comments = orm.relationship('Comments', back_populates='user')
 
 
     def set_password(self, password):
