@@ -16,3 +16,17 @@
     align-items: center;       /* по центру по вертикали */
     gap: 8px;
 }
+
+.search_btn_div{
+    margin-left: 40%;
+    margin-bottom: 3%;
+    margin-top: 3%;
+}
+
+.profile_photo_on_nav{
+    margin-left: 2%
+}
+
+.btn_write{
+    margin-bottom: 1.5%;
+}

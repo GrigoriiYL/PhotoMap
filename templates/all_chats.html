@@ -1,6 +1,9 @@
 {%extends "base.html"%}
 
 {%block content%}
+<div class="search_btn_div">
+    <a class="btn" href="/search">Поиск</a>
+</div>
 {% for chat in chats %}
 <div class="col-md6 border rounded">
     <img src="{{chat[1].profile_photo_link}}" height='100px' width='100px' alt="Нет аватарки">

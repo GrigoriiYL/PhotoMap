@@ -16,15 +16,18 @@
     <a class="btn" href="/">Главная</a>
     <a class="btn" href="/all_chats">Чаты</a>
     <a class="btn" href="/profile">Профиль</a>
+    <div class="profile_photo_on_nav">
+        <img src="{{current_user.profile_photo_link}}" height="25px" width="25px"><p>{{current_user.name}}</p>
+    </div>
 </nav>
 {%else%}
-
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <a class="btn" href="/registration">Зарегистрироваться</a>
-    <a class="btn" href="login">Войти</a></nav>
+    <a class="btn" href="login">Войти</a>
+</nav>
 {%endif%}
 <main role="main" class="container">
-    <br><br><br>
+    <br><br><br><br><br><br>
     {% block content %}{%endblock%}
 </main>
 </body>
