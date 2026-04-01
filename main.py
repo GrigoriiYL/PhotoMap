@@ -51,6 +51,7 @@ def open_post(id):
         com.post_id = id
         db_sess.add(com)
         db_sess.commit()
+        db_sess.close()
         return redirect(f'/open_post/{id}')
     comments = db_sess.query(Comments).filter(Comments.post_id == id).all()
     post = db_sess.query(Posts).filter(Posts.id == id).first()
@@ -64,6 +65,7 @@ def open_map(id):
     db_sess = db_session.create_session()
     post = db_sess.get(Posts, id)
     rend = render_template('map.html', post=post)
+    db_sess.close()
     return rend
 
 
@@ -86,6 +88,7 @@ def registration():
         db_sess = db_session.create_session()
         users = db_sess.query(User).filter(User.email == form.email.data).all()
         if users:
+            db_sess.close()
             return render_template('user_registration.html', title='Регистрация', form=form,
                                    message="Пользователь с таким email уже существует")
         f = request.files['file']
@@ -94,6 +97,7 @@ def registration():
             if filetype == 'jpg' or filetype == 'png' or filetype == 'jpeg':
                 f.save(f'static/prof_pic/{form.email.data}.jpg')
             else:
+                db_sess.close()
                 return render_template('user_registration.html', title='Регистрация', form=form,
                                        message='Необходимо выбрать файл типа png/jpg/jpeg')
         db_sess = db_session.create_session()
@@ -155,10 +159,12 @@ def chat_search(id):
     db_sess = db_session.create_session()
     chat1 = db_sess.query(Chats).filter(Chats.user1 == current_user.id, Chats.user2 == id).first()
     if chat1:
+        db_sess.close()
         return redirect(f'/open_chat/{chat1.id}')
     else:
         chat2 = db_sess.query(Chats).filter(Chats.user1 == id, Chats.user2 == current_user.id).first()
         if chat2:
+            db_sess.close()
             return redirect(f'/open_chat/{chat2.id}')
         else:
             chat = Chats(
@@ -209,6 +215,7 @@ def get_all_chats():
         else:
             sp.append(db_sess.get(User, el.user2))
         res_chat_sp.append(sp)
+    db_sess.close()
     return render_template("all_chats.html", chats=sorted(res_chat_sp, key=lambda x: x[0].time_change, reverse=True))
 
 
@@ -216,6 +223,7 @@ def get_all_chats():
 def open_profile():
     db_sess = db_session.create_session()
     posts = db_sess.query(Posts).filter(Posts.user_id == current_user.id).all()[::-1]
+    db_sess.close()
     return render_template('profile.html', posts=posts)
 
 
@@ -265,6 +273,7 @@ def create_post():
                 db_sess.close()
                 return redirect('/')
             else:
+
                 return render_template('post.html', form=form, message="Только форматы jpg, jpeg, json")
 
         else:
@@ -287,6 +296,7 @@ def change_user(id):
             if filetype == 'jpg' or filetype == 'png' or filetype == 'jpeg':
                 f.save(f'static/prof_pic/{current_user.email}.jpg')
             else:
+                db_sess.close()
                 return render_template('user_change.html', title='Изменение профиля', form=form,
                                        message='Необходимо выбрать файл типа png/jpg/jpeg')
             user.profile_photo_link = f'/static/prof_pic/{current_user.email}.jpg'
@@ -297,6 +307,7 @@ def change_user(id):
     user = db_sess.get(User, id)
     form.name.data = user.name
     form.about.data = user.about
+    db_sess.close()
     return render_template('user_change.html', form=form)
 
 
