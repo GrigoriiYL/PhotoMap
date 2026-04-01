@@ -30,3 +30,10 @@
 .btn_write{
     margin-bottom: 1.5%;
 }
+
+.post_img_center{
+    justify: center;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    margin-left: 2.5%;
+}

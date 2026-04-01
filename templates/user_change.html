@@ -1,0 +1,32 @@
+{%extends "base.html"%}
+
+{% block content %}
+<form action="" enctype="multipart/form-data" method="post">
+    {{form.hidden_tag()}}
+    <p>
+        {{form.name.label}}
+        {{form.name(class='form-control')}}
+        {% for errors in form.name.errors%}
+        <p class="alert alert-danger" role="alert">
+            {{error}}
+        </p>
+        {%endfor%}
+    </p>
+    <p>
+        {{form.about.label}}
+        {{form.about(class='form-control')}}
+        {% for errors in form.about.errors%}
+        <p class="alert alert-danger" role="alert">
+            {{error}}
+        </p>
+        {%endfor%}
+    </p>
+   <div class="form-group">
+        <label for="photo">Выберите аватарку</label>
+        <input type="file" class="form-control-file" id="photo" name="file">
+    </div>
+    <p>{{form.submit(type="submit", class="btn btn-primary") }}</p>
+    <div>{{message}}</div>
+
+</form>
+{%endblock%}

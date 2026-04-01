@@ -1,0 +1,27 @@
+{%extends "base.html"%}
+
+{% block content%}
+    <div class="post_img_center">
+        <a href="{{href}}" class="btn">{{href_text}}</a>
+    </div>
+{% for post in posts %}
+<div class="col-md6 border rounded">
+
+    <div class="post_img_center">
+        <img src="{{post.user.profile_photo_link}}" height="50px" width="50px">
+    </div>
+    <div class="post_img_center">
+        <h1>{{post.user.name}}</h1>
+    </div>
+
+    <div class="post_img_center">
+        <img src="{{post.img_link}}" height='48.75%' width="65%">
+    </div>
+    <div class="post_img_center">
+        <a class="btn" href="/open_post/{{post.id}}">Комментарии</a>
+    </div>
+</div>
+
+{%endfor%}
+
+{%endblock%}

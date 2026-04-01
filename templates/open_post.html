@@ -1,0 +1,27 @@
+{%extends "base.html" %}
+
+{% block content %}
+<div class="col-md6 border rounded">
+    <div class="post_img_center">
+        <img src="{{post.img_link}}" height='48.75%' width="65%">
+    </div>
+    {% if post.map_link%}
+        <div class="btn_write">
+            <a href='/open_map/{{post.id}}' class="btn">На карте</a>
+        </div>
+    {%endif%}
+    <form action="" method="post">
+        {{form.hidden_tag()}}
+
+        <p>{{form.content(class='form-control')}}</p>
+        <p>{{form.submit(type='submit', class='btn btn-primary')}}</p>
+    </form>
+    {% for com in comments%}
+    <div class="col-md6 border rounded">
+        <img src="{{com.user.profile_photo_link}}" height="25px" width="25px">
+        <p>{{com.user.name}}</p>
+        <h3>{{com.content}}</h3>
+    </div>
+    {%endfor%}
+</div>
+{%endblock%}

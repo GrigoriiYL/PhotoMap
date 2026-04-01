@@ -1,0 +1,22 @@
+{% extends "base.html"%}
+
+{% block content %}
+
+<form action="" enctype="multipart/form-data" method="POST">
+    {{form.hidden_tag()}}
+
+    <p>
+    <div class="form-group">
+        <label for="photo">Изображение</label>
+        <input type="file" class="form-control-file" id="photo" name="file">
+    </div>
+    </p>
+    <p>
+        {{form.address.label}}
+        {{form.address(class='form-control')}}
+    </p>
+    <p>{{form.submit(type="submit", class="btn btn-primary")}}</p>
+    <div>{{message}}</div>
+</form>
+
+{%endblock%}

@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class = 'post_img_center'>
+<img src="{{post.map_link}}" width="80%" height="60%">
+</div>
+<a href="/open_post/{{post.id}}" class="btn">Пост</a>
+{% endblock %}
