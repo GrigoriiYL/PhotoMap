@@ -1,0 +1,24 @@
+{% extends "base.html"%}
+
+{%block content%}
+<form action="" method="post">
+    {{form.hidden_tag()}}
+    <p>
+        {{form.content(class='form-control')}}
+        {% for error in form.content.errors %}}
+            <p>{{error}}</p>
+        {%endfor%}
+    </p>
+    <p>{{form.submit(type='submit', class='btn btn-primary')}}</p>
+    {% for mes in messages %}
+            <div class="image_name">
+                {%if mes.from_user == True %}
+                    <img src="{{mes.user.profile_photo_link}}" height="75px" width="75px" alt=" Нет аватарки">
+                {%else%}
+                    <img src="{{mes.bot.profile_photo_link}}" height="75px" width="75px" alt=" Нет аватарки">
+                {%endif%}
+            </div>
+            <h2 style="margin-left: 50px">{{mes.content}}</h2>
+    {%endfor%}
+</form>
+{%endblock%}

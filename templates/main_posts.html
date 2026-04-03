@@ -1,6 +1,7 @@
 {%extends "base.html"%}
 
 {% block content%}
+{% if current_user.is_authenticated %}
     <div class="post_img_center">
         <a href="{{href}}" class="btn">{{href_text}}</a>
     </div>
@@ -23,5 +24,5 @@
 </div>
 
 {%endfor%}
-
+{% endif %}
 {%endblock%}

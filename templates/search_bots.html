@@ -1,0 +1,23 @@
+{%extends "base.html"%}
+
+{%block content%}
+<form action="" method="POST">
+    {{form.hidden_tag()}}
+    <p>
+        {{form.name.label}}
+        {{form.name(class='form-control')}}
+    </p>
+    <p>{{form.submit(type="submit", class="btn btn-primary")}}</p>
+    {%for bot in bots%}
+    <div class="col-md6 border rounded">
+        <div class="image_name">
+            <img src="{{bot.profile_photo_link}}" height="100px" width="100px" alt=" Нет аватарки">
+            <h2>{{bot.name}}</h2>
+        </div>
+        <div>{{bot.about}}</div>
+        <a href="bot_chat_search/{{bot.id}}" class="btn">Написать</a>
+    </div>
+    {%endfor%}
+</form>
+
+{%endblock%}

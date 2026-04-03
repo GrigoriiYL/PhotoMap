@@ -15,10 +15,14 @@
         <a href="change_user/{{current_user.id}}" class="btn">Изменить профиль</a>
     </div>
 </div>
-<div class="post_img_center">
-    <a class="btn" href="/create_post">Создать пост</a>
+<div>
+    <div class="post_img_center">
+        <a class="btn" href="/create_post">Создать пост</a>
+    </div>
+    <div class="post_img_center">
+        <a class="btn" href="/create_bot">Создать бота</a>
+    </div>
 </div>
-
 {% for post in posts %}
 <div class="col-md6 border rounded">
     <div class="post_img_center">

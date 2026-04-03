@@ -1,0 +1,17 @@
+{%extends "base.html"%}
+
+{%block content%}
+<div class="search_btn_div">
+    <a class="btn" href="/search_bots">Поиск</a>
+</div>
+{% for chat in chats %}
+<div class="col-md6 border rounded">
+    <img src="{{chat.bot.profile_photo_link}}" height='100px' width='100px' alt="Нет аватарки">
+    <h2>{{chat.bot.name}}</h2>
+    <p>{{chat.bot.about}}</p>
+    <div class="btn_write">
+        <a class="btn" href="/open_bot_chat/{{chat.id}}">Написать</a>
+    </div>
+</div>
+{%endfor%}
+{%endblock%}

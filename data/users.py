@@ -7,7 +7,7 @@ from flask_login import LoginManager, UserMixin
 from sqlalchemy_serializer import SerializerMixin
 
 
-class User(SqlAlchemyBase, UserMixin):
+class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     __tablename__ = 'users'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
@@ -17,9 +17,12 @@ class User(SqlAlchemyBase, UserMixin):
     about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     subscribers = sqlalchemy.Column(sqlalchemy.String, nullable=True, default=' ')
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+
     messages = orm.relationship('Messages', back_populates='sender_user')
     posts = orm.relationship('Posts', back_populates='user')
     comments = orm.relationship('Comments', back_populates='user')
+    bot_message = orm.relationship('BotMessages', back_populates='user')
+    bot_chats = orm.relationship('BotChats', back_populates='user')
 
 
     def set_password(self, password):

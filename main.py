@@ -1,10 +1,14 @@
 import datetime
 import pprint
 import json
+import random
+
+import schedule
+from random import choice
 
 from requests import get
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify, make_response, request
 from data import db_session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from forms.user_form import UserForm, UserLoginForm
@@ -18,6 +22,11 @@ from data.posts import Posts
 from forms.comments_form import CommentForm
 from data.comments import Comments
 from forms.change_user_form import ChangeUserForm
+from forms.bot_create_form import BotCreateForm
+from data.bots import Bots
+from data.bot_messages import BotMessages
+from data.bot_chats import BotChats
+from data import bots_api
 
 static_apikey = "f3a0fe3a-b07e-4840-a1da-06f18b2ddf13"
 
@@ -28,6 +37,16 @@ with open('settings') as f:
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
+
+
+@app.errorhandler(400)
+def bad_request(_):
+    return make_response(jsonify({'error': 'Bad Request'}), 400)
 
 
 @app.route('/')
@@ -182,24 +201,26 @@ def chat_search(id):
 def open_chat(id):
     db_sess = db_session.create_session()
     chat = db_sess.query(Chats).filter(Chats.id == id).first()
-    form = ChatForm()
-    if form.validate_on_submit():
-        msg = Messages(
-            content=form.content.data,
-            sender=current_user.id,
-            chat_id=id
-        )
-        form.content.data = ''
-        db_sess.add(msg)
-        chat.time_change = datetime.datetime.now()
+    if current_user.id == chat.user1 or current_user.id == chat.user2:
+        form = ChatForm()
+        if form.validate_on_submit():
+            msg = Messages(
+                content=form.content.data,
+                sender=current_user.id,
+                chat_id=id
+            )
+            form.content.data = ''
+            db_sess.add(msg)
+            chat.time_change = datetime.datetime.now()
+            db_sess.commit()
+            db_sess.close()
+            return redirect(f'/open_chat/{id}')
+        messages = db_sess.query(Messages).filter(Messages.chat == chat).all()[::-1]
+        rnd = render_template('chat.html', form=form, messages=messages)
         db_sess.commit()
         db_sess.close()
-        return redirect(f'/open_chat/{id}')
-    messages = db_sess.query(Messages).filter(Messages.chat == chat).all()[::-1]
-    rnd = render_template('chat.html', form=form, messages=messages)
-    db_sess.commit()
-    db_sess.close()
-    return rnd
+        return rnd
+    return redirect('/all_chats')
 
 
 @app.route('/all_chats')
@@ -322,6 +343,109 @@ def subs():
     return rend
 
 
+@app.route('/create_bot', methods=['GET', 'POST'])
+def create_bot():
+    form = BotCreateForm()
+    if form.validate_on_submit():
+        alph = 'qwertyuiopasdfghj<>mn---::::zxcvbnm12345678900987654321QWERTYUIOPLKJHGFDSAZXCVBNMqwertyuiopasdfghj<>mn---::::zxcvbnm12345678900987654321QWERTYUIOPLKJHGFDSAZXCVBNMqwertyuiopasdfghj<><><>mn---::::zzxcvbnm12345678900987654321QWERTYUIOPLKJHGFDSAZXCVBNMqwertyuiopasdfghj<>mn---::::zxcvbnm12345678900987654321QWERTYUIOPLKJHGFDSAZXCVBNM'
+        db_sess = db_session.create_session()
+        all_api = [el.api_key for el in db_sess.query(Bots).all()]
+        api_key = ''.join(random.choices(alph, k=35))
+        while api_key in all_api:
+            api_key = ''.join(random.choices(alph, k=35))
+        bot = Bots()
+        bot.api_key = api_key
+        bot.name = form.name.data
+        bot.user_id = current_user.id
+        f = request.files['file']
+        filetype = f.filename.split('.')[-1].lower()
+        bot.about = form.about.data
+        if f:
+            if filetype == 'jpg' or filetype == 'png' or filetype == 'jpeg':
+                db_sess.add(bot)
+                db_sess.commit()
+                f.save(f'static/bots_profile_photo/{bot.id}.jpg')
+                bot.profile_photo_link = f'/static/bots_profile_photo/{bot.id}.jpg'
+                db_sess.commit()
+            else:
+                db_sess.close()
+                return render_template('bot_create.html', title='Создание бота', form=form,
+                                       message='Необходимо выбрать файл типа png/jpg/jpeg')
+        db_sess.commit()
+        db_sess.close()
+        return render_template('api.html', api_key=api_key)
+    return render_template('bot_create.html', form=form, title='Создание бота')
+
+
+@app.route('/all_bot_chat')
+def get_all_bot_chats():
+    db_sess = db_session.create_session()
+    chats = db_sess.query(BotChats).filter(BotChats.user_id == current_user.id).all()
+    rnd = render_template("all_bot_chats.html", chats=sorted(chats, key=lambda x: x.time_change, reverse=True))
+    db_sess.close()
+    return rnd
+
+
+@app.route('/open_bot_chat/<int:id>', methods=['GET', 'POST'])
+def open_bot_chat(id):
+    db_sess = db_session.create_session()
+    chat = db_sess.query(BotChats).filter(BotChats.id == id).first()
+    if current_user.id == chat.user_id:
+        form = ChatForm()
+        if form.validate_on_submit():
+            msg = BotMessages(
+                content=form.content.data,
+                bot_id=chat.bot_id,
+                user_id=current_user.id,
+                from_user=True,
+                chat_id=id,
+                user_name=current_user.name
+            )
+            form.content.data = ''
+            db_sess.add(msg)
+            chat.time_change = datetime.datetime.now()
+            db_sess.commit()
+            db_sess.close()
+            return redirect(f'/open_bot_chat/{id}')
+        messages = db_sess.query(BotMessages).filter(BotMessages.chat == chat).all()[::-1]
+        rnd = render_template('bot_chat.html', form=form, messages=messages)
+        db_sess.commit()
+        db_sess.close()
+        return rnd
+    return redirect('/all_chats')
+
+
+@app.route('/search_bots', methods=['GET', 'POST'])
+def search_bots():
+    form = SearchForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        bots = db_sess.query(Bots).filter(Bots.name.like('%' + form.name.data + '%'))
+        db_sess.close()
+        return render_template('search_bots.html', form=form, bots=bots)
+    return render_template('search_bots.html', form=form)
+
+
+@app.route('/bot_chat_search/<int:id>')
+def bot_chat_search(id):
+    db_ses = db_session.create_session()
+    chat = db_ses.query(BotChats).filter(BotChats.bot_id == id, BotChats.user_id == current_user.id).first()
+    if chat:
+        db_ses.close()
+        return redirect(f'/open_bot_chat/{chat.id}')
+    else:
+        chat = BotChats(
+            bot_id=id,
+            user_id=current_user.id
+        )
+        db_ses.add(chat)
+        db_ses.commit()
+        ch = db_ses.query(BotChats).filter(BotChats.bot_id == id, BotChats.user_id == current_user.id).first()
+        db_ses.close()
+        return redirect(f'/open_bot_chat/{ch.id}')
+
+
 if __name__ == '__main__':
     db_session.global_init("db/PhotoMap.db")
+    app.register_blueprint(bots_api.blueprint)
     app.run(host='0.0.0.0', port=8080)
