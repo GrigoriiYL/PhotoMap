@@ -371,6 +371,8 @@ def create_bot():
                 db_sess.close()
                 return render_template('bot_create.html', title='Создание бота', form=form,
                                        message='Необходимо выбрать файл типа png/jpg/jpeg')
+
+        db_sess.add(bot)
         db_sess.commit()
         db_sess.close()
         return render_template('api.html', api_key=api_key)

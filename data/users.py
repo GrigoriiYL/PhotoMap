@@ -24,7 +24,6 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     bot_message = orm.relationship('BotMessages', back_populates='user')
     bot_chats = orm.relationship('BotChats', back_populates='user')
 
-
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
 
