@@ -447,7 +447,8 @@ def bot_chat_search(id):
         return redirect(f'/open_bot_chat/{ch.id}')
 
 
+db_session.global_init("db/PhotoMap.db")
+app.register_blueprint(bots_api.blueprint)
+
 if __name__ == '__main__':
-    db_session.global_init("db/PhotoMap.db")
-    app.register_blueprint(bots_api.blueprint)
     app.run(host='0.0.0.0', port=8080)
