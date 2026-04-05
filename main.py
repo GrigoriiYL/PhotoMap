@@ -190,6 +190,7 @@ def chat_search(id):
                 user1=current_user.id,
                 user2=id
             )
+            chat.time_change = datetime.datetime.now()
             db_sess.add(chat)
             db_sess.commit()
             ch = db_sess.query(Chats).filter(Chats.user1 == current_user.id, Chats.user2 == id).first()
@@ -440,6 +441,7 @@ def bot_chat_search(id):
             bot_id=id,
             user_id=current_user.id
         )
+        chat.time_change = datetime.datetime.now()
         db_ses.add(chat)
         db_ses.commit()
         ch = db_ses.query(BotChats).filter(BotChats.bot_id == id, BotChats.user_id == current_user.id).first()

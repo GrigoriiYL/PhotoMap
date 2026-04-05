@@ -13,15 +13,15 @@ in_work = None
 def get_messages():
     global in_work
     print('-----------------------')
-    api_key = 'KVJ6YX5Ug<>nfw>Fmy26eRbef<u2o:Wmp--'
-    response = get('https://n0c9ku-2a03-d000-a4-39e2-20fe-65d1-6d84-3872.ru.tuna.am/bots_api/all_chats', json={
+    api_key = '3zrY:1yrVwciyd-wzZCA2913-5FJwfP45Mi'
+    response = get('https://photomap-br2s.onrender.com//bots_api/all_chats', json={
         'api_key': api_key
     }).json()['messages']
 
     for message in response:
         if message['user_id'] == 1:
             if in_work:
-                response_post = post('https://n0c9ku-2a03-d000-a4-39e2-20fe-65d1-6d84-3872.ru.tuna.am/bots_api/send_message', json={
+                response_post = post('https://photomap-br2s.onrender.com//bots_api/send_message', json={
                     'content': message['content'],
                     'user_id': in_work[1],
                     'api_key': api_key
@@ -40,14 +40,14 @@ def get_messages():
                 if all_on_bd:
                     in_work = all_on_bd[0]
                     print(in_work)
-                    response_post = post('https://n0c9ku-2a03-d000-a4-39e2-20fe-65d1-6d84-3872.ru.tuna.am/bots_api/send_message', json={
+                    response_post = post('https://photomap-br2s.onrender.com//bots_api/send_message', json={
                         'content': in_work[3],
                         'user_id': 1,
                         'api_key': api_key
                     }).json()
                     pprint.pprint(response_post)
             else:
-                response_post = post('https://n0c9ku-2a03-d000-a4-39e2-20fe-65d1-6d84-3872.ru.tuna.am/bots_api/send_message', json={
+                response_post = post('https://photomap-br2s.onrender.com//bots_api/send_message', json={
                     'content': 'Новых сообщений нет',
                     'user_id': 1,
                     'api_key': api_key
@@ -64,7 +64,7 @@ def get_messages():
                 all_on_bd = cur.execute("""SELECT * FROM queue""").fetchall()
                 if all_on_bd:
                     in_work = all_on_bd[0]
-                    response_post = post('https://n0c9ku-2a03-d000-a4-39e2-20fe-65d1-6d84-3872.ru.tuna.am/bots_api/send_message', json={
+                    response_post = post('https://photomap-br2s.onrender.com//bots_api/send_message', json={
                         'content': in_work[3],
                         'user_id': 1,
                         'api_key': api_key
