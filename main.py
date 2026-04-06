@@ -2,8 +2,6 @@ import datetime
 import pprint
 import json
 import random
-
-import schedule
 from random import choice
 
 from requests import get
@@ -47,6 +45,13 @@ def not_found(error):
 @app.errorhandler(400)
 def bad_request(_):
     return make_response(jsonify({'error': 'Bad Request'}), 400)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
 
 
 @app.route('/')
